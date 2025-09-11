@@ -1,6 +1,5 @@
 package walksy.crosshairaddons.manager;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -44,7 +43,12 @@ public class CrosshairRendererManager {
 
         if (ConfigManager.environmentBlend) {
             RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR, GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+            RenderSystem.blendFuncSeparate(
+                RenderSystem.SourceFactor.ONE_MINUS_DST_COLOR.value,
+                RenderSystem.DestFactor.ONE_MINUS_SRC_COLOR.value,
+                RenderSystem.SourceFactor.ONE.value,
+                RenderSystem.DestFactor.ZERO.value
+            );
         }
         if ((ConfigManager.playerIndicator && this.client.targetedEntity instanceof PlayerEntity) || (this.client.targetedEntity instanceof MobEntity && ConfigManager.mobIndicator)) {
             context.drawTexture(this.CUSTOM_MOD_ICONS, (context.getScaledWindowWidth() - 9) / 2, (context.getScaledWindowHeight() - 9) / 2, 0, 0, 9, 9);
