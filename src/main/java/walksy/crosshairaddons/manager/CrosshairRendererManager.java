@@ -2,7 +2,6 @@ package walksy.crosshairaddons.manager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -40,19 +39,18 @@ public class CrosshairRendererManager {
         if (ConfigManager.environmentBlend) {
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(
-                RenderSystem.SourceFactor.ONE_MINUS_DST_COLOR, 
-                RenderSystem.DestFactor.ONE_MINUS_SRC_COLOR, 
-                RenderSystem.SourceFactor.ONE, 
+                RenderSystem.SourceFactor.ONE_MINUS_DST_COLOR,
+                RenderSystem.DestFactor.ONE_MINUS_SRC_COLOR,
+                RenderSystem.SourceFactor.ONE,
                 RenderSystem.DestFactor.ZERO
             );
         }
 
-        if ((ConfigManager.playerIndicator && this.client.targetedEntity instanceof PlayerEntity) || 
+        if ((ConfigManager.playerIndicator && this.client.targetedEntity instanceof PlayerEntity) ||
             (this.client.targetedEntity instanceof MobEntity && ConfigManager.mobIndicator)) {
-            // Updated drawTexture method call with correct parameters
-            context.drawTexture(this.CUSTOM_MOD_ICONS, 
-                (context.getScaledWindowWidth() - 9) / 2, 
-                (context.getScaledWindowHeight() - 9) / 2, 
+            context.drawTexture(this.CUSTOM_MOD_ICONS,
+                (context.getScaledWindowWidth() - 9) / 2,
+                (context.getScaledWindowHeight() - 9) / 2,
                 0.0f, 0.0f, 9.0f, 9.0f, 0, 0, 1, 1);
         }
 
@@ -68,18 +66,18 @@ public class CrosshairRendererManager {
             int centerY = (context.getScaledWindowHeight() + 9 - originalHeight) / 2 + offsetY;
 
             context.getMatrices().pushPose();
-            context.getMatrices().translate(centerX + (float) originalWidth / 2, 
+            context.getMatrices().translate(centerX + (float) originalWidth / 2,
                                             centerY + (float) originalHeight / 2 + 3.7f, 0);
             context.getMatrices().scale((float) scale, (float) scale, 1.0F);
             context.getMatrices().translate(-(float) originalWidth / 2, -(float) originalHeight / 2 + 3.7f, 0);
             Color o = Color.WHITE;
-            RenderSystem.setShaderColor(o.getRed() / 255f, o.getGreen() /255f, o.getBlue() / 255f, 1);
+            RenderSystem.setShaderColor(o.getRed() / 255f, o.getGreen() / 255f, o.getBlue() / 255f, 1);
             context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, originalWidth, originalHeight - 3);
             RenderSystem.setShaderColor(1, 1, 1, 1);
             context.getMatrices().popPose();
         }
 
-        // Render hitmaker
+        // Render hitmarker
         if (ConfigManager.hitMarker && this.hitMarkerDisplayTicks > 0) {
             switch (ConfigManager.hitMarkerType) {
                 case FADE: {
