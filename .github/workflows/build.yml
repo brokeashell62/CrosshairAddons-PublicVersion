@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -20,16 +20,11 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Set up Gradle 8.7
-        uses: gradle/gradle-build-action@v3
-        with:
-          gradle-version: 8.7
+      - name: Setup Gradle 8.12
+        run: gradle wrapper --gradle-version 8.12
 
-      - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.7
-
-      - name: Grant execute permission for Gradle
-        run: chmod +x ./gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --stacktrace
