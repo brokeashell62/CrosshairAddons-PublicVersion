@@ -38,7 +38,7 @@ public class CrosshairRendererManager {
     }
 
     private void renderCustomIcons(DrawContext context) {
-        context.getMatrices().pushPose();
+        context.getMatrices().push();
 
         if (ConfigManager.environmentBlend) {
             RenderSystem.enableBlend();
@@ -69,7 +69,7 @@ public class CrosshairRendererManager {
             int centerX = (context.getScaledWindowWidth() - originalWidth) / 2;
             int centerY = (context.getScaledWindowHeight() + 9 - originalHeight) / 2 + offsetY;
 
-            context.getMatrices().pushPose();
+            context.getMatrices().push();
             context.getMatrices().translate(centerX + (originalWidth / 2f), centerY + (originalHeight / 2f) + 3.7f, 0);
             context.getMatrices().scale((float) scale, (float) scale, 1.0F);
             context.getMatrices().translate(-(originalWidth / 2f), -(originalHeight / 2f) + 3.7f, 0);
@@ -79,7 +79,7 @@ public class CrosshairRendererManager {
             context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, originalWidth, originalHeight - 3);
             RenderSystem.setShaderColor(1, 1, 1, 1);
 
-            context.getMatrices().popPose();
+            context.getMatrices().pop();
         }
 
         // Hitmarker
@@ -95,7 +95,7 @@ public class CrosshairRendererManager {
             RenderSystem.defaultBlendFunc();
         }
 
-        context.getMatrices().popPose();
+        context.getMatrices().pop();
     }
 
     private void drawDefaultHitmarker(DrawContext context, boolean fade) {
