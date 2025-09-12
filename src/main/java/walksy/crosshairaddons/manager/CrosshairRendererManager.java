@@ -6,35 +6,33 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import walksy.crosshairaddons.CrosshairAddonsMod;
 
 public class CrosshairRendererManager {
 
-    // Updated Identifier creation
+    // Correct Identifier for the texture
     private static final Identifier CUSTOM_MOD_ICONS = new Identifier("crosshairaddons", "textures/gui/modicons.png");
 
+    // Method to render the crosshair
     public void renderCrosshair(DrawContext context) {
-        // This method assumes 'context' is already initialized, such as within a rendering method.
-
-        // Enable blend
+        // Enable blend mode for transparency
         RenderSystem.enableBlend();
-        
-        // Using correct rendering method
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); // Set to white (or modify if needed)
 
-        // Push and pop matrices to ensure proper transformations
+        // Set shader color to white (or modify if you want a different color)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        // Get the transformation matrix for scaling/translation
         MatrixStack matrixStack = context.getMatrices();
-        matrixStack.push();
+        matrixStack.push(); // Save the current matrix
 
-        // Example of translating and scaling texture (fixed matrix issue)
-        matrixStack.translate(0, 0, 0);  // Ensure translation is applied correctly
-        matrixStack.scale(1.0F, 1.0F, 1.0F); // Scale if needed
+        // Apply transformations if needed (for example, scale or translate the texture)
+        matrixStack.translate(0, 0, 0);  // Translate the texture (modify as needed)
+        matrixStack.scale(1.0F, 1.0F, 1.0F); // Scale the texture if needed
 
-        // Draw texture at the proper location
-        context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, 100, 100);  // Adjust the size/position accordingly
+        // Draw the texture at a given position with width and height
+        context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, 100, 100); // Adjust position and size
 
-        // Reset blend and transformations
+        // Reset blend mode and transformations
         RenderSystem.defaultBlendFunc();
-        matrixStack.pop();
+        matrixStack.pop(); // Restore the previous matrix
     }
 }
