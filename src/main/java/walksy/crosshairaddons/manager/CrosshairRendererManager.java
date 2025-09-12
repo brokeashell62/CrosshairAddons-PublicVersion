@@ -146,3 +146,4 @@ public class CrosshairRendererManager {
         return itemStack.isOf(Items.ELYTRA);
     }
 }
+
