@@ -16,8 +16,8 @@ public class CrosshairRendererManager {
     public static final CrosshairRendererManager INSTANCE = new CrosshairRendererManager();
     private final MinecraftClient client = MinecraftClient.getInstance();
 
-    // ✅ Fixed path: textures/gui/modicons.png
-    private static final Identifier CUSTOM_MOD_ICONS =
+    // Fixed path: textures/gui/modicons.png
+    private static final Identifier CUSTOM_MOD_ICONS = 
             new Identifier("crosshairaddons", "textures/gui/modicons.png");
 
     private int hitMarkerDisplayTicks = 0;
@@ -38,24 +38,24 @@ public class CrosshairRendererManager {
     }
 
     private void renderCustomIcons(DrawContext context) {
-        context.getMatrices().push();
+        context.getMatrices().pushPose();
 
         if (ConfigManager.environmentBlend) {
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(
-                RenderSystem.SourceFactor.ONE_MINUS_DST_COLOR.value,
-                RenderSystem.DestFactor.ONE_MINUS_SRC_COLOR.value,
-                RenderSystem.SourceFactor.ONE.value,
-                RenderSystem.DestFactor.ZERO.value
+                RenderSystem.SourceFactor.ONE_MINUS_DST_COLOR, 
+                RenderSystem.DestFactor.ONE_MINUS_SRC_COLOR, 
+                RenderSystem.SourceFactor.ONE, 
+                RenderSystem.DestFactor.ZERO
             );
         }
 
-        if ((ConfigManager.playerIndicator && this.client.targetedEntity instanceof PlayerEntity) ||
+        if ((ConfigManager.playerIndicator && this.client.targetedEntity instanceof PlayerEntity) || 
             (this.client.targetedEntity instanceof MobEntity && ConfigManager.mobIndicator)) {
-            context.drawTexture(CUSTOM_MOD_ICONS,
-                (context.getScaledWindowWidth() - 9) / 2,
-                (context.getScaledWindowHeight() - 9) / 2,
-                0, 0, 9, 9);
+            context.drawTexture(CUSTOM_MOD_ICONS, 
+                (context.getScaledWindowWidth() - 9) / 2, 
+                (context.getScaledWindowHeight() - 9) / 2, 
+                0.0f, 0.0f, 9.0f, 9.0f);
         }
 
         int offsetY = 0; // Offset for the elytra indicator
@@ -69,25 +69,25 @@ public class CrosshairRendererManager {
             int centerX = (context.getScaledWindowWidth() - originalWidth) / 2;
             int centerY = (context.getScaledWindowHeight() + 9 - originalHeight) / 2 + offsetY;
 
-            context.getMatrices().push();
-            context.getMatrices().translate(centerX + (originalWidth / 2f), centerY + (originalHeight / 2f) + 3.7, 0);
+            context.getMatrices().pushPose();
+            context.getMatrices().translate(centerX + (originalWidth / 2f), centerY + (originalHeight / 2f) + 3.7f, 0);
             context.getMatrices().scale((float) scale, (float) scale, 1.0F);
-            context.getMatrices().translate(-(originalWidth / 2f), -(originalHeight / 2f) + 3.7, 0);
+            context.getMatrices().translate(-(originalWidth / 2f), -(originalHeight / 2f) + 3.7f, 0);
 
             Color o = Color.WHITE;
             RenderSystem.setShaderColor(o.getRed() / 255f, o.getGreen() / 255f, o.getBlue() / 255f, 1);
             context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, originalWidth, originalHeight - 3);
             RenderSystem.setShaderColor(1, 1, 1, 1);
 
-            context.getMatrices().pop();
+            context.getMatrices().popPose();
         }
 
         // Hitmarker
         if (ConfigManager.hitMarker && this.hitMarkerDisplayTicks > 0) {
             switch (ConfigManager.hitMarkerType) {
-                case FADE -> this.drawDefaultHitmarker(context, true);
-                case ANIMATION -> this.drawAnimationHitmarker(context);
-                case DEFAULT -> this.drawDefaultHitmarker(context, false);
+                case FADE: this.drawDefaultHitmarker(context, true); break;
+                case ANIMATION: this.drawAnimationHitmarker(context); break;
+                case DEFAULT: this.drawDefaultHitmarker(context, false); break;
             }
         }
 
@@ -95,7 +95,7 @@ public class CrosshairRendererManager {
             RenderSystem.defaultBlendFunc();
         }
 
-        context.getMatrices().pop();
+        context.getMatrices().popPose();
     }
 
     private void drawDefaultHitmarker(DrawContext context, boolean fade) {
@@ -110,19 +110,13 @@ public class CrosshairRendererManager {
         context.drawTexture(CUSTOM_MOD_ICONS,
             (context.getScaledWindowWidth() - 10) / 2,
             (context.getScaledWindowHeight() - 11) / 2,
-            24, 0, 10, 10);
+            24.0f, 0.0f, 10.0f, 10.0f);
 
         if (fade) {
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
     }
 
-    /**
-     * Animation frames:
-     * First frame = 0
-     * Second frame = 13
-     * Third frame = 24
-     */
     private void drawAnimationHitmarker(DrawContext context) {
         int[] frameV = {24, 13, 0};
         int numFrames = frameV.length;
@@ -137,7 +131,7 @@ public class CrosshairRendererManager {
         context.drawTexture(CUSTOM_MOD_ICONS,
             (context.getScaledWindowWidth() - 10) / 2,
             (context.getScaledWindowHeight() - 11) / 2,
-            24, frameV[frameIndex], 10, 10);
+            24.0f, frameV[frameIndex], 10.0f, 10.0f);
     }
 
     public boolean isWearingElytra() {
@@ -146,5 +140,3 @@ public class CrosshairRendererManager {
         return itemStack.isOf(Items.ELYTRA);
     }
 }
-
-
