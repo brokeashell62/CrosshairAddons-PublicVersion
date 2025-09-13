@@ -1,26 +1,33 @@
 plugins {
-    id 'fabric-loom' version '1.10.5' // Fabric Loom version
+    id 'fabric-loom' version '1.10.5'
+    id 'java'
 }
 
-group = 'com.example' // Use your mod group (can be your package name)
-version = '1.0.0' // Set your mod's version
-
-minecraft {
-    version = '1.21.4' // Minecraft version
-    yarnMappings = '1.21.4+build.5' // Yarn mappings (should match your Minecraft version)
-    loaderVersion = '0.14.0' // Fabric Loader version
-}
-
-dependencies {
-    // Fabric API dependency
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.84.0+1.21" // Correct version for Minecraft 1.21
-
-    // Loom (Fabric's build tool) dependency
-    compileOnly "net.fabricmc:fabric-loom:1.10.5" // Loom version for compilation
-}
+group = 'walksy.crosshairaddons'
+version = '1.21.8-compat'
 
 repositories {
     maven {
-        url "https://maven.fabricmc.net/"
+        url = uri("https://maven.fabricmc.net/")
     }
+    mavenCentral()
+}
+
+dependencies {
+    // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Loom
+    compileOnly "net.fabricmc:fabric-loom:${project.loom_version}"
+}
+
+minecraft {
+    version = '1.21.4'
+    yarnMappings = "1.21.4+build.1"
+    loaderVersion = '0.17.2'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
 }
