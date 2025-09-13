@@ -2,46 +2,34 @@ package walksy.crosshairaddons.manager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
-import org.lwjgl.opengl.GL11;
+import walksy.crosshairaddons.CrosshairAddons;
 
 public class CrosshairRendererManager {
 
     private static final Identifier CUSTOM_MOD_ICONS = new Identifier("crosshairaddons", "modicons.png");
-    private MinecraftClient client;
-    
-    public CrosshairRendererManager(MinecraftClient client) {
-        this.client = client;
-    }
+    private final MinecraftClient client = MinecraftClient.getInstance();
 
-    public void renderCrosshair(MatrixStack matrices, float scale, int originalWidth, int originalHeight) {
-        // Push the current pose to the matrix stack
-        matrices.push();
+    public void renderCrosshair(MatrixStack matrixStack, float scale) {
+        int originalWidth = 16;
+        int originalHeight = 16;
 
-        // Set blend mode to enable transparent rendering
+        RenderSystem.pushMatrix();  // Use pushMatrix instead of getMatrices().pushPose()
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        
+        matrixStack.translate(-(float) originalWidth / 2, -(float) originalHeight / 2 + 3.7f, 0);
+        matrixStack.scale(scale, scale, 1.0F);
 
-        // Center the crosshair
-        int centerX = client.getWindow().getScaledWidth() / 2;
-        int centerY = client.getWindow().getScaledHeight() / 2;
-
-        // Scale and translate the matrix to render the crosshair in the center
-        matrices.translate(-(float) originalWidth / 2, -(float) originalHeight / 2 + 3.7f, 0);
-        matrices.scale(scale, scale, 1.0F);
-
-        // Draw the custom crosshair texture
         client.getTextureManager().bindTexture(CUSTOM_MOD_ICONS);
-        RenderSystem.setShaderTexture(0, CUSTOM_MOD_ICONS);
-        client.getBufferBuilders().getEntityVertexConsumers().drawQuad(centerX, centerY, originalWidth, originalHeight);
+        // Draw texture at the center with the correct parameters
+        RenderSystem.drawTexture(CUSTOM_MOD_ICONS, 0, 0, originalWidth, originalHeight);
 
-        // Reset the shader color and disable blend mode
-        RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.disableBlend();
-
-        // Pop the matrix to restore the previous transformations
-        matrices.pop();
+        RenderSystem.popMatrix();  // Use popMatrix instead of getMatrices().popPose()
     }
 }
