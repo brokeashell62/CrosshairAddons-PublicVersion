@@ -1,30 +1,51 @@
 plugins {
-    id 'fabric-loom' version '1.10.5'
-    id 'maven-publish'
+    id 'fabric-loom' version '0.10.0' // Ensure you are using a compatible version of Loom
 }
 
-group = project.maven_group
-version = project.mod_version
-archivesBaseName = project.archives_base_name
+group = 'com.yourname' // Replace with your actual group name
+version = '1.0.0' // Set your mod version
+archivesBaseName = 'crosshairaddons' // Set your mod's name
 
 repositories {
-    maven { url "https://maven.fabricmc.net/" }
-    mavenCentral()
+    maven { url 'https://maven.fabricmc.net' }
+    maven { url 'https://modrinth.com' }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:${project.fabric_version}"
+    // Minecraft Version
+    minecraft "com.mojang:minecraft:1.21.8"
+
+    // Yarn Mappings Version: Match this to the one you downloaded (for Minecraft 1.21.8)
+    mappings "net.fabricmc:yarn:1.21.8+build.1:v2"
+
+    // Fabric API Version: Ensure this version supports Minecraft 1.21.8
+    modImplementation "net.fabricmc:fabric-api:0.54.0+1.21.8"
+
+    // Optional: Your mod's dependencies
+    modCompile "net.fabricmc:fabric-api:${project.fabric_api_version}" // Ensure to use the correct version here
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+loom {
+    // This defines how to resolve your mod from sources
+    accessWidener = file('src/main/resources/crosshairaddons.accesswidener') // If you have an access widener file
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "group", project.group
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version, "group": project.group
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = "UTF-8"
+// The clean task cleans up the build directory
+tasks.clean {
+    delete rootProject.buildDir
 }
+
+// Optionally, you can configure additional tasks, like generating access wideners or other features
