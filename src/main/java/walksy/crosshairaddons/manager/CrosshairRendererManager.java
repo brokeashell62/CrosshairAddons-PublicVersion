@@ -1,38 +1,47 @@
 package walksy.crosshairaddons.manager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import org.lwjgl.opengl.GL11;
 
 public class CrosshairRendererManager {
 
-    // Correct Identifier for the texture
-    private static final Identifier CUSTOM_MOD_ICONS = new Identifier("crosshairaddons", "textures/gui/modicons.png");
+    private static final Identifier CUSTOM_MOD_ICONS = new Identifier("crosshairaddons", "modicons.png");
+    private MinecraftClient client;
+    
+    public CrosshairRendererManager(MinecraftClient client) {
+        this.client = client;
+    }
 
-    // Method to render the crosshair
-    public void renderCrosshair(DrawContext context) {
-        // Enable blend mode for transparency
+    public void renderCrosshair(MatrixStack matrices, float scale, int originalWidth, int originalHeight) {
+        // Push the current pose to the matrix stack
+        matrices.push();
+
+        // Set blend mode to enable transparent rendering
         RenderSystem.enableBlend();
-
-        // Set shader color to white (or modify if you want a different color)
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        // Get the transformation matrix for scaling/translation
-        MatrixStack matrixStack = context.getMatrices();
-        matrixStack.push(); // Save the current matrix
+        // Center the crosshair
+        int centerX = client.getWindow().getScaledWidth() / 2;
+        int centerY = client.getWindow().getScaledHeight() / 2;
 
-        // Apply transformations if needed (for example, scale or translate the texture)
-        matrixStack.translate(0, 0, 0);  // Translate the texture (modify as needed)
-        matrixStack.scale(1.0F, 1.0F, 1.0F); // Scale the texture if needed
+        // Scale and translate the matrix to render the crosshair in the center
+        matrices.translate(-(float) originalWidth / 2, -(float) originalHeight / 2 + 3.7f, 0);
+        matrices.scale(scale, scale, 1.0F);
 
-        // Draw the texture at a given position with width and height
-        context.drawTexture(CUSTOM_MOD_ICONS, 0, 0, 10, 0, 100, 100); // Adjust position and size
+        // Draw the custom crosshair texture
+        client.getTextureManager().bindTexture(CUSTOM_MOD_ICONS);
+        RenderSystem.setShaderTexture(0, CUSTOM_MOD_ICONS);
+        client.getBufferBuilders().getEntityVertexConsumers().drawQuad(centerX, centerY, originalWidth, originalHeight);
 
-        // Reset blend mode and transformations
-        RenderSystem.defaultBlendFunc();
-        matrixStack.pop(); // Restore the previous matrix
+        // Reset the shader color and disable blend mode
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.disableBlend();
+
+        // Pop the matrix to restore the previous transformations
+        matrices.pop();
     }
 }
