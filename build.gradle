@@ -3,51 +3,42 @@ plugins {
     id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
-
-group = 'walksy.crosshairaddons'
-version = '1.0.0'
+group = "walksy.crosshairaddons"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
-    maven {
-        name = "Fabric"
-        url = "https://maven.fabricmc.net/"
-    }
+    maven { url "https://maven.fabricmc.net/" }
+    maven { url "https://maven.terraformersmc.com/" } // if you use ModMenu or other Fabric mods
 }
 
 dependencies {
-    // Minecraft + Yarn mappings
     minecraft "com.mojang:minecraft:1.21.8"
-    mappings "net.fabricmc:yarn:1.21.8+build.1:v2"
+    mappings loom.officialMojangMappings()
 
-    // Fabric Loader
-    modImplementation "net.fabricmc:fabric-loader:0.16.9"
-
-    // Fabric API (latest for 1.21.8)
+    modImplementation "net.fabricmc:fabric-loader:0.16.7"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.133.4+1.21.8"
-
-    // (Optional) Add other mods or APIs your project depends on here
 }
 
 loom {
     splitEnvironmentSourceSets()
-
     runs {
         client {
             client()
-            ideConfigGenerated true
-            runDir "run"
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
         }
         server {
             server()
-            ideConfigGenerated true
-            runDir "run"
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
         }
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
 }
