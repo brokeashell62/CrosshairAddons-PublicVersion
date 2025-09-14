@@ -1,85 +1,53 @@
-// Apply the necessary plugins
 plugins {
-    id 'fabric-loom' version '0.10.0'
+    id 'fabric-loom' version '1.10.5'
+    id 'maven-publish'
 }
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+group = 'walksy.crosshairaddons'
+version = '1.0.0'
 
 repositories {
-    // Add Fabric Maven repository
-    maven { url 'https://maven.fabricmc.net/' }
-    mavenCentral() // Fallback to Maven Central if needed
-    maven { url 'https://modrinth.com' } // Additional repository if required
+    mavenCentral()
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
 }
 
-// Define dependencies for Minecraft, Fabric API, and Yarn mappings
 dependencies {
-    // Minecraft Version
+    // Minecraft + Yarn mappings
     minecraft "com.mojang:minecraft:1.21.8"
-    // Yarn Mappings Version
     mappings "net.fabricmc:yarn:1.21.8+build.1:v2"
-    // Fabric API Version
-    modImplementation "net.fabricmc:fabric-api:0.54.0+1.21.8"
+
+    // Fabric Loader
+    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+
+    // Fabric API (latest for 1.21.8)
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.133.4+1.21.8"
+
+    // (Optional) Add other mods or APIs your project depends on here
 }
 
-// Setup the fabric loom plugin for compiling and packaging the mod
 loom {
-    // Define the mappings for Yarn version
-    mappings "net.fabricmc:yarn:1.21.8+build.1:v2"
-    // Define the target Minecraft version
-    minecraftVersion "1.21.8"
-    // Configure the loom to use the correct repository for Yarn
-    repositories {
-        maven { url 'https://maven.fabricmc.net/' }
+    splitEnvironmentSourceSets()
+
+    runs {
+        client {
+            client()
+            ideConfigGenerated true
+            runDir "run"
+        }
+        server {
+            server()
+            ideConfigGenerated true
+            runDir "run"
+        }
     }
 }
 
-// Enable test for JVM compatibility and build configuration
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-// Specify where the mod files should be stored
-group = 'com.yourmodid'
-version = '1.0.0'
-archivesBaseName = 'crosshairaddons'
-
-// Source set for the mod code
-sourceSets {
-    main {
-        java.srcDirs = ['src/main/java']
-        resources.srcDirs = ['src/main/resources']
-    }
-}
-
-// Set up the custom tasks for compiling and running the mod
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    options.release = 17 // Ensure compatibility with Java 17 or higher
-}
-
-tasks.jar {
-    // Include the mod file as a manifest entry
-    manifest {
-        attributes(
-            'Fabric-Loom-Version': '0.10.0', // Add Fabric Loom version to the manifest
-            'Minecraft-Version': '1.21.8' // Specify the Minecraft version used in the mod
-        )
-    }
-}
-
-// Task to configure the mod's build and version
-task buildMod(type: Jar) {
-    dependsOn 'build'
-    archiveBaseName.set('crosshairaddons')
-    from sourceSets.main.output
-    archiveVersion.set(project.version)
-    archiveClassifier.set('')
-    destinationDirectory.set(file("$buildDir/libs"))
-}
-
-// Ensure the mod is included in the build process
-build.dependsOn buildMod
-
-// Gradle Wrapper compatibility with Gradle 8.12
-wrapper {
-    gradleVersion = '8.12'
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
 }
