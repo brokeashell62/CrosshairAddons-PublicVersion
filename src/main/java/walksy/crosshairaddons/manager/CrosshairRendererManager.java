@@ -1,35 +1,62 @@
 package walksy.crosshairaddons.manager;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
-import walksy.crosshairaddons.CrosshairAddons;
+
+import java.awt.*;
 
 public class CrosshairRendererManager {
-
     private static final Identifier CUSTOM_MOD_ICONS = new Identifier("crosshairaddons", "modicons.png");
-    private final MinecraftClient client = MinecraftClient.getInstance();
 
-    public void renderCrosshair(MatrixStack matrixStack, float scale) {
-        int originalWidth = 16;
-        int originalHeight = 16;
+    public static void renderCustomIcon(DrawContext context, int x, int y, int u, int v, int width, int height) {
+        context.getMatrices().push();
 
-        RenderSystem.pushMatrix();  // Use pushMatrix instead of getMatrices().pushPose()
+        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        
-        matrixStack.translate(-(float) originalWidth / 2, -(float) originalHeight / 2 + 3.7f, 0);
-        matrixStack.scale(scale, scale, 1.0F);
+        // Reset color (white, fully opaque)
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-        client.getTextureManager().bindTexture(CUSTOM_MOD_ICONS);
-        // Draw texture at the center with the correct parameters
-        RenderSystem.drawTexture(CUSTOM_MOD_ICONS, 0, 0, originalWidth, originalHeight);
+        // Correct overload from mappings:
+        // drawTexture(Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight)
+        context.drawTexture(
+                CUSTOM_MOD_ICONS,
+                x, y,
+                u, v,
+                width, height,
+                256, 256 // Assuming texture is 256x256, adjust if your PNG is different
+        );
 
-        RenderSystem.disableBlend();
-        RenderSystem.popMatrix();  // Use popMatrix instead of getMatrices().popPose()
+        context.getMatrices().pop();
+    }
+
+    public static void renderColoredIcon(DrawContext context, int x, int y, int u, int v, int width, int height, Color color) {
+        context.getMatrices().push();
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        // Apply color
+        RenderSystem.setShaderColor(
+                color.getRed() / 255f,
+                color.getGreen() / 255f,
+                color.getBlue() / 255f,
+                1f
+        );
+
+        context.drawTexture(
+                CUSTOM_MOD_ICONS,
+                x, y,
+                u, v,
+                width, height,
+                256, 256
+        );
+
+        // Reset shader color back to white
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+
+        context.getMatrices().pop();
     }
 }
