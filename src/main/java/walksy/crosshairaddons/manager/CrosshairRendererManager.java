@@ -12,21 +12,16 @@ public class CrosshairRendererManager {
     public static void renderCustomIcon(DrawContext context, int x, int y, int u, int v, int width, int height) {
         context.getMatrices().push();
 
-        // Enable blending for transparency
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-
-        // Reset color (white, fully opaque)
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-        // Correct overload from mappings:
-        // drawTexture(Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight)
         context.drawTexture(
                 CUSTOM_MOD_ICONS,
                 x, y,
                 u, v,
                 width, height,
-                256, 256 // Assuming texture is 256x256, adjust if your PNG is different
+                256, 256 // Adjust if modicons.png has a different size
         );
 
         context.getMatrices().pop();
@@ -38,7 +33,6 @@ public class CrosshairRendererManager {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        // Apply color
         RenderSystem.setShaderColor(
                 color.getRed() / 255f,
                 color.getGreen() / 255f,
@@ -54,7 +48,6 @@ public class CrosshairRendererManager {
                 256, 256
         );
 
-        // Reset shader color back to white
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         context.getMatrices().pop();
